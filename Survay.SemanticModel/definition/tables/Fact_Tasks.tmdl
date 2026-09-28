@@ -1,0 +1,67 @@
+table Fact_Tasks
+	lineageTag: 7d5bd7db-f3b4-468a-b1d6-63f55c2c11f4
+
+	column Audit_Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 8199349f-0a4b-47ec-80d7-61853134624f
+		summarizeBy: none
+		sourceColumn: Audit_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Task_Type
+		dataType: string
+		lineageTag: bf4e1d3b-707a-4bbf-97ee-63f582122a5a
+		summarizeBy: none
+		sourceColumn: Task_Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Task_Status
+		dataType: string
+		lineageTag: f594e28d-bd0b-47a1-b8fa-027b14358ba5
+		summarizeBy: none
+		sourceColumn: Task_Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Task_Count
+		dataType: int64
+		formatString: 0
+		lineageTag: 179e9860-99ef-4b24-8524-1cb5f3d18db3
+		summarizeBy: sum
+		sourceColumn: Task_Count
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Tasks = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("D:\Power BI\Survey.xlsx"), null, true),
+				    Sheet1_Sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+				    #"Renamed Columns" = Table.RenameColumns(#"Promoted Headers",{{"Id", "Audit_Id"}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"Start time", "Completion time", "Email", "Name", "Date of Audit", "Business Unit", "Client", "Building/Location", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", "List the Five completed PPM's that were Reviewed", "Date of last Fire Evacuation Drill", "Date of Next Fire Evacuation Drill ", "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", "List the PPM Observed", "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", "Document Control & Procedures.Emergency Escalation Plan", "Document Control & Procedures.Rain Plan", "Document Control & Procedures.Lift Entrapment Plan", "Document Control & Procedures.Water & Power Loss Procedure", "Document Control & Procedures.Fire Alarm Procedure", "Document Control & Procedures.Emergency Evacuation Procedure", "Document Control & Procedures.Mechanical and electrical line diagrams are in place", "Document Control & Procedures.Forward Maintenance Register is in place and up to date", "Document Control & Procedures.Document Control is in place", "Document Control & Procedures Comments/Observations", "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", "House Keeping Standards.Plant rooms are Locked/Secured", "House Keeping Standards.Storerooms are clean, organised and tidy", "House Keeping Standards.Offices are clean and tidy", "Grooming Standards.Body Odour Acceptable", "Grooming Standards.Clean Shaven/Beard Trimmed", "Grooming Standards.Hair Neat & Tidy", "Grooming Standards.Wearing Correct Initial Uniform", "Grooming Standards.Shirt Tucked Into Trousers", "Grooming Standards.Black Belt Worn", "Grooming Standards.Black Safety Shoes Clean & Polished", "Grooming Standards.Company ID Card Visible", "Additional Comments/Observations", "Month", "YEAR-MONTH", "Region"}),
+				    #"Unpivoted Other Columns" = Table.UnpivotOtherColumns(#"Removed Columns", {"Audit_Id"}, "Attribute", "Value"),
+				    #"Trimmed Text" = Table.TransformColumns(#"Unpivoted Other Columns",{{"Attribute", Text.Trim, type text}}),
+				    #"Split Column by Delimiter" = Table.SplitColumn(#"Trimmed Text", "Attribute", Splitter.SplitTextByEachDelimiter({" "}, QuoteStyle.Csv, false), {"Attribute.1", "Attribute.2"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Split Column by Delimiter",{{"Attribute.1", type text}, {"Attribute.2", type text}}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Changed Type",{"Attribute.1"}),
+				    #"Split Column by Delimiter1" = Table.SplitColumn(#"Removed Columns1", "Attribute.2", Splitter.SplitTextByEachDelimiter({" "}, QuoteStyle.Csv, true), {"Attribute.2.1", "Attribute.2.2"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Split Column by Delimiter1",{{"Attribute.2.1", type text}, {"Attribute.2.2", type text}}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Changed Type1",{"Attribute.2.2"}),
+				    #"Split Column by Delimiter2" = Table.SplitColumn(#"Removed Columns2", "Attribute.2.1", Splitter.SplitTextByEachDelimiter({" "}, QuoteStyle.Csv, false), {"Attribute.2.1.1", "Attribute.2.1.2"}),
+				    #"Changed Type2" = Table.TransformColumnTypes(#"Split Column by Delimiter2",{{"Attribute.2.1.1", type text}, {"Attribute.2.1.2", type text}}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Changed Type2",{"Audit_Id", "Attribute.2.1.2", "Attribute.2.1.1", "Value"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns",{{"Attribute.2.1.2", "Task_Type"}, {"Attribute.2.1.1", "Task_Status"}, {"Value", "Task_Count"}}),
+				    #"Changed Type3" = Table.TransformColumnTypes(#"Renamed Columns1",{{"Audit_Id", Int64.Type}, {"Task_Count", Int64.Type}}),
+				    #"Appended Query" = Table.Combine({#"Changed Type3", #"Sheet1 (6)"})
+				in
+				    #"Appended Query"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

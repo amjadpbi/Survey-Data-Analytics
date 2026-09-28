@@ -1,0 +1,101 @@
+table Hierarchy
+	lineageTag: ed5fb489-2164-4002-a46c-53747022e731
+
+	column Criteria_Id
+		formatString: 0
+		lineageTag: 287fc679-5e24-44cf-93fe-f7ae34cfb14d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Criteria_Id]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criteria_name
+		lineageTag: dbdef769-fec5-49a9-93b7-1d66d23e63d0
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Criteria_name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criteria_Description
+		lineageTag: 76b85a09-abd5-4f9f-b6bc-90f32b48d680
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Criteria_Description]
+
+		annotation SummarizationSetBy = Automatic
+
+	column MAX_Score = MAX(Dim_Criteria[Max_Points])
+		formatString: 0
+		lineageTag: d9a3ca0a-bcb9-4293-8fbc-702a6b0a4847
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Hierarchy = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE(
+				    "Criteria_Id", INTEGER,
+				    "Criteria_name", STRING,
+				    "Criteria_Description", STRING,
+				    {
+				        { 1, "Open Reactive Tasks YTD", "Total Open Reactive tasks Year-to-Date" },
+				        { 2, "Closed Reactive Tasks YTD", "Total Closed Reactive tasks Year-to-Date" },
+				        { 3, "Open PPM Tasks YTD", "Total Open PPM tasks Year-to-Date" },
+				        { 4, "Closed PPM Tasks YTD", "Total Closed PPM tasks Year-to-Date" },
+				
+				        { 5, "Task Sheet Found", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)" },
+				        { 6, "Task Sheet Signed", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)" },
+				        { 7, "Task Sheet Filled Correctly", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly" },
+				        { 8, "Updated into CAFM", "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM" },
+				        { 9, "SFG20 Compliance", "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20" },
+				
+				        { 10, "Method Statement", "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM" },
+				        { 11, "Risk Assessment Briefed", "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives" },
+				        { 12, "PPE Usage Correct", "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE" },
+				        { 13, "Completed per SFG20", "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20" },
+				        { 14, "Task Sheet Accuracy", "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly" },
+				        { 15, "Correct Tools & Equipment", "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment" },
+				        { 16, "Location Clean & Tidy", "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy" },
+				        { 17, "Site Made Safe", "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)" },
+				
+				        { 18, "Fire Alarm Log Book", "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required" },
+				        { 19, "Water Treatment Log Book", "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required" },
+				        { 20, "Lift Log Book", "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required" },
+				        { 21, "BMS Log Book", "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned" },
+				        { 22, "Fire Extinguishers", "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service" },
+				        { 23, "UPS & Generator Log Book", "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required" },
+				
+				        { 24, "Emergency Escalation Plan", "Document Control & Procedures.Emergency Escalation Plan" },
+				        { 25, "Rain Plan", "Document Control & Procedures.Rain Plan" },
+				        { 26, "Lift Entrapment Plan", "Document Control & Procedures.Lift Entrapment Plan" },
+				        { 27, "Water & Power Loss Procedure", "Document Control & Procedures.Water & Power Loss Procedure" },
+				        { 28, "Fire Alarm Procedure", "Document Control & Procedures.Fire Alarm Procedure" },
+				        { 29, "Emergency Evacuation Procedure", "Document Control & Procedures.Emergency Evacuation Procedure" },
+				        { 30, "M&E Line Diagrams", "Document Control & Procedures.Mechanical and electrical line diagrams are in place" },
+				        { 31, "Maintenance Register", "Document Control & Procedures.Forward Maintenance Register is in place and up to date" },
+				
+				        { 32, "Plant Rooms Clean", "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks" },
+				        { 33, "Plant Rooms Secured", "House Keeping Standards.Plant rooms are Locked/Secured" },
+				        { 34, "Storerooms Organised", "House Keeping Standards.Storerooms are clean, organised and tidy" },
+				        { 35, "Offices Clean", "House Keeping Standards.Offices are clean and tidy" },
+				
+				        { 36, "Body Odour Acceptable", "Grooming Standards.Body Odour Acceptable" },
+				        { 37, "Clean Shaven / Trimmed", "Grooming Standards.Clean Shaven/Beard Trimmed" },
+				        { 38, "Hair Neat & Tidy", "Grooming Standards.Hair Neat & Tidy" },
+				        { 39, "Correct Uniform", "Grooming Standards.Wearing Correct Initial Uniform" },
+				        { 40, "Shirt Tucked In", "Grooming Standards.Shirt Tucked Into Trousers" },
+				        { 41, "Black Belt Worn", "Grooming Standards.Black Belt Worn" },
+				        { 42, "Safety Shoes Polished", "Grooming Standards.Black Safety Shoes Clean & Polished" },
+				        { 43, "ID Card Visible", "Grooming Standards.Company ID Card Visible" }
+				    }
+				)
+				
+				
+				```
+
+	annotation PBI_Id = 53784b53dfaa4957b87f751fff88d159
+

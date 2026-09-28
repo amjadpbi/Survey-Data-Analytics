@@ -1,0 +1,105 @@
+table Dim_Criteria
+	lineageTag: 95d7790d-1995-441c-835f-cc7f5bd9d676
+
+	column Criteria_Key
+		formatString: 0
+		lineageTag: c45da3eb-790e-4c97-ad07-265d7cc63a05
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Criteria_Key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category_Key
+		formatString: 0
+		lineageTag: e920a702-9c04-427b-8f71-ac8a3e877c58
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category_Key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criteria_Name
+		lineageTag: 90d751ce-f6f6-49b8-af86-674fc55dc2ac
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Criteria_Name]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Max_Points
+		formatString: 0
+		lineageTag: 775a5f98-8fe9-4b32-baeb-f90d6d470f0b
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Max_Points]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Criteria = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "Criteria_Key", INTEGER,
+				    "Category_Key", INTEGER,
+				    "Criteria_Name", STRING,
+				    "Max_Points", INTEGER,
+				    {
+				        { 1, 1, "Total Open Reactive tasks Year-to-Date", BLANK() },
+				        { 2, 1, "Total Closed Reactive tasks Year-to-Date", BLANK() },
+				        { 3, 1, "Total Open PPM tasks Year-to-Date", BLANK() },
+				        { 4, 1, "Total Closed PPM tasks Year-to-Date", BLANK() },
+				
+				        { 5, 2, "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", 5 },
+				        { 6, 2, "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", 5 },
+				        { 7, 2, "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", 5 },
+				        { 8, 2, "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", 5 },
+				        { 9, 2, "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", 5 },
+				
+				        { 10, 3, "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", 5 },
+				        { 11, 3, "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", 5 },
+				        { 12, 3, "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", 5 },
+				        { 13, 3, "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", 5 },
+				        { 14, 3, "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", 5 },
+				        { 15, 3, "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", 5 },
+				        { 16, 3, "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", 5 },
+				        { 17, 3, "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", 5 },
+				
+				        { 18, 4, "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", 5 },
+				        { 19, 4, "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", 5 },
+				        { 20, 4, "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", 5 },
+				        { 21, 4, "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", 5 },
+				        { 22, 4, "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", 5 },
+				        { 23, 4, "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", 5 },
+				
+				        { 24, 5, "Document Control & Procedures.Emergency Escalation Plan", 5 },
+				        { 25, 5, "Document Control & Procedures.Rain Plan", 5 },
+				        { 26, 5, "Document Control & Procedures.Lift Entrapment Plan", 5 },
+				        { 27, 5, "Document Control & Procedures.Water & Power Loss Procedure", 5 },
+				        { 28, 5, "Document Control & Procedures.Fire Alarm Procedure", 5 },
+				        { 29, 5, "Document Control & Procedures.Emergency Evacuation Procedure", 5 },
+				        { 30, 5, "Document Control & Procedures.Mechanical and electrical line diagrams are in place", 5 },
+				        { 31, 5, "Document Control & Procedures.Forward Maintenance Register is in place and up to date", 5 },
+				
+				        { 32, 6, "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", 5 },
+				        { 33, 6, "House Keeping Standards.Plant rooms are Locked/Secured", 5 },
+				        { 34, 6, "House Keeping Standards.Storerooms are clean, organised and tidy", 5 },
+				        { 35, 6, "House Keeping Standards.Offices are clean and tidy", 5 },
+				
+				        { 36, 7, "Grooming Standards.Body Odour Acceptable", 5 },
+				        { 37, 7, "Grooming Standards.Clean Shaven/Beard Trimmed", 5 },
+				        { 38, 7, "Grooming Standards.Hair Neat & Tidy", 5 },
+				        { 39, 7, "Grooming Standards.Wearing Correct Initial Uniform", 5 },
+				        { 40, 7, "Grooming Standards.Shirt Tucked Into Trousers", 5 },
+				        { 41, 7, "Grooming Standards.Black Belt Worn", 5 },
+				        { 42, 7, "Grooming Standards.Black Safety Shoes Clean & Polished", 5 },
+				        { 43, 7, "Grooming Standards.Company ID Card Visible", 5 }
+				    }
+				)
+				
+				
+				```
+
+	annotation PBI_Id = 49789fa1e1b74650af691dbce9d3038d
+

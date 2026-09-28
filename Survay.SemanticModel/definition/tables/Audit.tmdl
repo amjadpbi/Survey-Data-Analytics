@@ -1,0 +1,115 @@
+table Audit
+	lineageTag: e2189a54-275d-45b3-8a48-53e16aca2d31
+
+	column 'Start time'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5c891c28-8dba-4895-aa2f-75696d11ecbc
+		summarizeBy: none
+		sourceColumn: Start time
+
+		variation Variation
+			isDefault
+			relationship: e3793ed5-07b3-4458-a59e-01f67e50879e
+			defaultHierarchy: LocalDateTable_dd67c951-3806-4195-9fc2-73952466a360.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Completion time'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: cec38cf2-4968-4e39-96ea-eebc78252b12
+		summarizeBy: none
+		sourceColumn: Completion time
+
+		variation Variation
+			isDefault
+			relationship: d7c5fb53-cd0f-425f-8004-fb34d376029b
+			defaultHierarchy: LocalDateTable_ef8a5ead-b54a-47f6-b5bf-2d322834fd59.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Auditor_Name
+		dataType: string
+		lineageTag: c8389d72-e7ab-4758-a9c4-173f6b7b05a6
+		summarizeBy: none
+		sourceColumn: Auditor_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date_Key
+		dataType: double
+		lineageTag: 837748f9-fde7-493f-91f9-8d75bab93ad2
+		summarizeBy: count
+		sourceColumn: Date_Key
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Audit_ID
+		dataType: int64
+		formatString: 0
+		lineageTag: 4f618dc4-b822-4ed3-ae18-1457a2eb512b
+		summarizeBy: count
+		sourceColumn: Audit_ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location_Key
+		dataType: int64
+		formatString: 0
+		lineageTag: 0cde0793-7936-4a54-ade5-bd62ed4fae9d
+		summarizeBy: count
+		sourceColumn: Location_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Audit = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\hp\Downloads\Survey_Dummy_Data.xlsx"), null, true),
+				    Sheet1_Sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Id", Int64.Type}, {"Start time", type datetime}, {"Completion time", type datetime}, {"Email", type text}, {"Name", type text}, {"Date of Audit", type date}, {"Business Unit", type text}, {"Client", type text}, {"Building/Location", type text}, {"Total Open Reactive tasks Year-to-Date ", Int64.Type}, {"Total Closed Reactive tasks Year-to-Date", Int64.Type}, {"Total Open PPM tasks Year-to-Date", Int64.Type}, {"Total Closed PPM tasks Year-to-Date ", Int64.Type}, {"Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", Int64.Type}, {"Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", Int64.Type}, {"Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", Int64.Type}, {"Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", Int64.Type}, {"Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", Int64.Type}, {"List the Five completed PPM's that were Reviewed", type text}, {"Date of last Fire Evacuation Drill", type date}, {"Date of Next Fire Evacuation Drill ", type date}, {"Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", Int64.Type}, {"Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", Int64.Type}, {"List the PPM Observed", type text}, {"Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", Int64.Type}, {"Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", Int64.Type}, {"Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", Int64.Type}, {"Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", Int64.Type}, {"Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", Int64.Type}, {"Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", Int64.Type}, {"Document Control & Procedures.Emergency Escalation Plan", Int64.Type}, {"Document Control & Procedures.Rain Plan", Int64.Type}, {"Document Control & Procedures.Lift Entrapment Plan", Int64.Type}, {"Document Control & Procedures.Water & Power Loss Procedure", Int64.Type}, {"Document Control & Procedures.Fire Alarm Procedure", Int64.Type}, {"Document Control & Procedures.Emergency Evacuation Procedure", Int64.Type}, {"Document Control & Procedures.Mechanical and electrical line diagrams are in place", Int64.Type}, {"Document Control & Procedures.Forward Maintenance Register is in place and up to date", Int64.Type}, {"Document Control & Procedures.Document Control is in place", Int64.Type}, {"Document Control & Procedures Comments/Observations", type text}, {"House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", Int64.Type}, {"House Keeping Standards.Plant rooms are Locked/Secured", Int64.Type}, {"House Keeping Standards.Storerooms are clean, organised and tidy", Int64.Type}, {"House Keeping Standards.Offices are clean and tidy", Int64.Type}, {"Grooming Standards.Body Odour Acceptable", Int64.Type}, {"Grooming Standards.Clean Shaven/Beard Trimmed", Int64.Type}, {"Grooming Standards.Hair Neat & Tidy", Int64.Type}, {"Grooming Standards.Wearing Correct Initial Uniform", Int64.Type}, {"Grooming Standards.Shirt Tucked Into Trousers", Int64.Type}, {"Grooming Standards.Black Belt Worn", Int64.Type}, {"Grooming Standards.Black Safety Shoes Clean & Polished", Int64.Type}, {"Grooming Standards.Company ID Card Visible", Int64.Type}, {"Additional Comments/Observations", type text}, {"Month", type text}, {"YEAR-MONTH", type date}, {"Region", type text}}),
+				    #"Added Index" = Table.AddIndexColumn(#"Changed Type", "Index", 5, 1, Int64.Type),
+				    #"Removed Columns" = Table.RemoveColumns(#"Added Index",{"Total Open Reactive tasks Year-to-Date ", "Total Closed Reactive tasks Year-to-Date", "Total Open PPM tasks Year-to-Date", "Total Closed PPM tasks Year-to-Date ", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", "List the Five completed PPM's that were Reviewed", "Date of last Fire Evacuation Drill", "Date of Next Fire Evacuation Drill ", "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", "List the PPM Observed", "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", "Document Control & Procedures.Emergency Escalation Plan", "Document Control & Procedures.Rain Plan", "Document Control & Procedures.Lift Entrapment Plan", "Document Control & Procedures.Water & Power Loss Procedure", "Document Control & Procedures.Fire Alarm Procedure", "Document Control & Procedures.Emergency Evacuation Procedure", "Document Control & Procedures.Mechanical and electrical line diagrams are in place", "Document Control & Procedures.Forward Maintenance Register is in place and up to date", "Document Control & Procedures.Document Control is in place", "Document Control & Procedures Comments/Observations", "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", "House Keeping Standards.Plant rooms are Locked/Secured", "House Keeping Standards.Storerooms are clean, organised and tidy", "House Keeping Standards.Offices are clean and tidy", "Grooming Standards.Body Odour Acceptable", "Grooming Standards.Clean Shaven/Beard Trimmed", "Grooming Standards.Hair Neat & Tidy", "Grooming Standards.Wearing Correct Initial Uniform", "Grooming Standards.Shirt Tucked Into Trousers", "Grooming Standards.Black Belt Worn", "Grooming Standards.Black Safety Shoes Clean & Polished", "Grooming Standards.Company ID Card Visible", "Additional Comments/Observations", "Month", "YEAR-MONTH", "Region"}),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Removed Columns",{"Id", "Index", "Start time", "Completion time", "Email", "Name", "Date of Audit", "Business Unit", "Client", "Building/Location"}),
+				    #"Removed Columns1" = Table.RemoveColumns(#"Reordered Columns",{"Id"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns1",{{"Index", "Audit_ID"}}),
+				    #"Reordered Columns1" = Table.ReorderColumns(#"Renamed Columns",{"Audit_ID", "Email", "Name", "Date of Audit", "Business Unit", "Client", "Building/Location", "Start time", "Completion time"}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Reordered Columns1", "Audit_ID", "Audit_ID - Copy"),
+				    #"Reordered Columns2" = Table.ReorderColumns(#"Duplicated Column",{"Audit_ID", "Email", "Name", "Date of Audit", "Audit_ID - Copy", "Business Unit", "Client", "Building/Location", "Start time", "Completion time"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns2",{{"Audit_ID - Copy", "Location_Key"}}),
+				    #"Removed Columns2" = Table.RemoveColumns(#"Renamed Columns1",{"Business Unit", "Client", "Building/Location"}),
+				    #"Changed Type1" = Table.TransformColumnTypes(#"Removed Columns2",{{"Date of Audit", Int64.Type}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Changed Type1",45335,15,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value",45600,4,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1",45420,5,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2",45630,6,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value3",45579,7,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4",45329,8,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value5",45566,9,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value7" = Table.ReplaceValue(#"Replaced Value6",45647,10,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value8" = Table.ReplaceValue(#"Replaced Value7",45397,11,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value9" = Table.ReplaceValue(#"Replaced Value8",45316,12,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value10" = Table.ReplaceValue(#"Replaced Value9",45484,13,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value11" = Table.ReplaceValue(#"Replaced Value10",45407,14,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value12" = Table.ReplaceValue(#"Replaced Value11",45463,16,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value13" = Table.ReplaceValue(#"Replaced Value12",45315,17,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value14" = Table.ReplaceValue(#"Replaced Value13",45439,17,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value15" = Table.ReplaceValue(#"Replaced Value14",45462,18,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value16" = Table.ReplaceValue(#"Replaced Value15",45324,19,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Replaced Value17" = Table.ReplaceValue(#"Replaced Value16",45415,20,Replacer.ReplaceValue,{"Date of Audit"}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Replaced Value17",{{"Date of Audit", "Date_Key"}}),
+				    #"Removed Columns3" = Table.RemoveColumns(#"Renamed Columns2",{"Email"}),
+				    #"Reordered Columns3" = Table.ReorderColumns(#"Removed Columns3",{"Audit_ID", "Date_Key", "Location_Key", "Name", "Start time", "Completion time"}),
+				    #"Renamed Columns3" = Table.RenameColumns(#"Reordered Columns3",{{"Name", "Auditor_Name"}})
+				in
+				    #"Renamed Columns3"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,63 @@
+table Dim_Category
+	lineageTag: db23f739-0625-4c55-ba3b-c85786444d50
+
+	column Category_Key
+		formatString: 0
+		lineageTag: a176a6cd-95d8-4d34-9316-e0f80cd3e4b2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category_Key]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category_Name
+		lineageTag: 479e8819-9e6c-4baa-a3c6-2a7550125c8a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Category_Name]
+		sortByColumn: Category_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column Max_Score
+		formatString: 0
+		lineageTag: f16f633f-ea1f-46f5-a196-24d1bb70bf1d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Max_Score]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Weight
+		formatString: 0%;-0%;0%
+		lineageTag: 8527413c-1377-482d-850c-863021d15803
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Weight]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Category = calculated
+		mode: import
+		source = ```
+				
+				DATATABLE (
+				    "Category_Key", INTEGER,
+				    "Category_Name", STRING,
+				    "Max_Score", INTEGER,
+				    "Weight", DOUBLE,
+				    {
+				        { 1, "Operational Performance", BLANK(), 0.15 },
+				        { 2, "PPM Quality Compliance", 25, 0.20 },
+				        { 3, "Field Observations", 40, 0.20 },
+				        { 4, "Log Books & Testing", 30, 0.15 },
+				        { 5, "Document Control & Procedures", 40, 0.15 },
+				        { 6, "Housekeeping Standards", 20, 0.10 },
+				        { 7, "Grooming & Presentation", 40, 0.05 }
+				    }
+				)
+				
+				```
+
+	annotation PBI_Id = c0b21452e3c148ce90cb7bc05e8660a5
+

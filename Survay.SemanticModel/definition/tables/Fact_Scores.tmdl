@@ -1,0 +1,85 @@
+table Fact_Scores
+	lineageTag: aba1685b-91b5-4366-ac67-25de560c8bb6
+
+	column Score_Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 4916321c-d13a-4186-ad70-46b791ee1439
+		summarizeBy: count
+		sourceColumn: Score_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Audit_Id
+		dataType: int64
+		formatString: 0
+		lineageTag: 4db68903-4d09-4ef5-8e2c-8123e71be04c
+		summarizeBy: none
+		sourceColumn: Audit_Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: int64
+		formatString: 0
+		lineageTag: 14d8a5de-7f76-4941-bcd0-43d8dbe2f099
+		summarizeBy: sum
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criteria_Name
+		dataType: string
+		lineageTag: 1ad692e8-f151-40fc-9ada-82d87634e1c6
+		summarizeBy: none
+		sourceColumn: Criteria_Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Criteria_Key = ```
+			
+			VAR Attr = Fact_Scores[Criteria_Name]
+			RETURN
+			CALCULATE (
+			    MAX ( Dim_Criteria[Criteria_Key] ),
+			    FILTER (
+			        Dim_Criteria,
+			        CONTAINSSTRING ( Attr, Dim_Criteria[Criteria_Name] )
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 6e5afc37-2054-40ed-a388-f855f58a0c6b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Fact_Scores = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("D:\Power BI\Survey.xlsx"), null, true),
+				    Sheet1_Sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+				    #"Renamed Columns" = Table.RenameColumns(#"Promoted Headers",{{"Id", "Score_Id"}}),
+				    #"Duplicated Column" = Table.DuplicateColumn(#"Renamed Columns", "Score_Id", "Score_Id - Copy"),
+				    #"Reordered Columns" = Table.ReorderColumns(#"Duplicated Column",{"Score_Id", "Score_Id - Copy", "Start time", "Completion time", "Email", "Name", "Date of Audit", "Business Unit", "Client", "Building/Location", "Total Open Reactive tasks Year-to-Date ", "Total Closed Reactive tasks Year-to-Date", "Total Open PPM tasks Year-to-Date", "Total Closed PPM tasks Year-to-Date ", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", "List the Five completed PPM's that were Reviewed", "Date of last Fire Evacuation Drill", "Date of Next Fire Evacuation Drill ", "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", "List the PPM Observed", "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", "Document Control & Procedures.Emergency Escalation Plan", "Document Control & Procedures.Rain Plan", "Document Control & Procedures.Lift Entrapment Plan", "Document Control & Procedures.Water & Power Loss Procedure", "Document Control & Procedures.Fire Alarm Procedure", "Document Control & Procedures.Emergency Evacuation Procedure", "Document Control & Procedures.Mechanical and electrical line diagrams are in place", "Document Control & Procedures.Forward Maintenance Register is in place and up to date", "Document Control & Procedures.Document Control is in place", "Document Control & Procedures Comments/Observations", "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", "House Keeping Standards.Plant rooms are Locked/Secured", "House Keeping Standards.Storerooms are clean, organised and tidy", "House Keeping Standards.Offices are clean and tidy", "Grooming Standards.Body Odour Acceptable", "Grooming Standards.Clean Shaven/Beard Trimmed", "Grooming Standards.Hair Neat & Tidy", "Grooming Standards.Wearing Correct Initial Uniform", "Grooming Standards.Shirt Tucked Into Trousers", "Grooming Standards.Black Belt Worn", "Grooming Standards.Black Safety Shoes Clean & Polished", "Grooming Standards.Company ID Card Visible", "Additional Comments/Observations", "Month", "YEAR-MONTH", "Region"}),
+				    #"Renamed Columns1" = Table.RenameColumns(#"Reordered Columns",{{"Score_Id - Copy", "Audit_Id"}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns1",{"Start time", "Completion time", "Email", "Name", "Date of Audit", "Business Unit", "Client", "Building/Location"}),
+				    #"Unpivoted Other Columns" = Table.UnpivotOtherColumns(#"Removed Columns", {"Audit_Id", "Score_Id"}, "Attribute", "Value"),
+				    #"Trimmed Text" = Table.TransformColumns(Table.TransformColumnTypes(#"Unpivoted Other Columns", {{"Value", type text}}, "en-PK"),{{"Attribute", Text.Trim, type text}, {"Value", Text.Trim, type text}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Trimmed Text","Yes","5",Replacer.ReplaceText,{"Value"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","No","0",Replacer.ReplaceText,{"Value"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Replaced Value1",{{"Score_Id", Int64.Type}, {"Audit_Id", Int64.Type}, {"Value", Int64.Type}}),
+				    #"Replaced Errors" = Table.ReplaceErrorValues(#"Changed Type", {{"Value", null}}),
+				    #"Trimmed Text1" = Table.TransformColumns(#"Replaced Errors",{{"Attribute", Text.Trim, type text}}),
+				    #"Renamed Columns2" = Table.RenameColumns(#"Trimmed Text1",{{"Attribute", "Criteria_Name"}}),
+				    #"Appended Query" = Table.Combine({#"Renamed Columns2", Sheet1})
+				in
+				    #"Appended Query"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

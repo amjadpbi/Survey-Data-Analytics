@@ -1,0 +1,38 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-PK
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["Fact_Audit","Dim_Date","Dim_Location","Fact_Scores","Fact_Tasks","_Measures","Sheet1","Audit","Location","Date","Sheet1 (6)"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Fact_Audit
+ref table Dim_Date
+ref table Dim_Location
+ref table Fact_Scores
+ref table Fact_Tasks
+ref table Dim_Category
+ref table Dim_Criteria
+ref table DateTableTemplate_3a6d3cd0-3c37-42bd-a59a-623e60c71a02
+ref table LocalDateTable_2baec099-1ec5-410b-ae6a-463b7fe886b8
+ref table LocalDateTable_17269684-5624-4feb-a8c2-1b86de2051bc
+ref table LocalDateTable_17b6b139-41ac-4390-9a70-22d6105f462c
+ref table _Measures
+ref table Hierarchy
+ref table Sheet1
+ref table Audit
+ref table LocalDateTable_dd67c951-3806-4195-9fc2-73952466a360
+ref table LocalDateTable_ef8a5ead-b54a-47f6-b5bf-2d322834fd59
+ref table Location
+ref table Date
+ref table LocalDateTable_daa72224-49f0-49d6-bd6b-302f61476972
+ref table 'Sheet1 (6)'
+
+ref cultureInfo en-US
+

@@ -1,0 +1,404 @@
+table _Measures
+	lineageTag: c37add8f-36c2-4df9-a45e-2a8a6c03adcd
+
+	measure 'Total Audits' = COUNTROWS(Fact_Audit)
+		formatString: 0
+		lineageTag: 24bd9efb-7693-4b0e-9c37-7992296ae942
+
+	measure 'Total Open Tasks' = ```
+			
+			CALCULATE(
+			    SUM(Fact_Tasks[Task_Count]),
+			    Fact_Tasks[Task_Status] = "Open"
+			)
+			
+			```
+		formatString: 0
+		displayFolder: Task
+		lineageTag: b1907c76-7165-4ec3-92ee-3693f9e02e99
+
+	measure 'Total Closed Tasks' =
+			
+			CALCULATE(
+			    SUM(Fact_Tasks[Task_Count]),
+			    Fact_Tasks[Task_Status] = "Closed"
+			)
+		formatString: 0
+		displayFolder: Task
+		lineageTag: fb67efc4-7a00-451b-8036-20a2cc3c9092
+
+	measure 'Task Completion Rate' =
+			
+			DIVIDE(
+			    [Total Closed Tasks],
+			    [Total Closed Tasks] + [Total Open Tasks],
+			    0
+			)
+		displayFolder: Task
+		lineageTag: 5db7bb03-060a-444e-a5f4-90f90cd4787d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Reactive Task Completion %' =
+			
+			DIVIDE(
+			    CALCULATE([Total Closed Tasks], Fact_Tasks[Task_Type] = "Reactive tasks"),
+			    CALCULATE([Total Closed Tasks] + [Total Open Tasks], Fact_Tasks[Task_Type] = "Reactive tasks"),
+			    0
+			)
+		displayFolder: Task
+		lineageTag: 3b4e90ff-e838-4afe-add6-83dc07150b15
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PPM Task Completion %' =
+			
+			DIVIDE(
+			    CALCULATE([Total Closed Tasks], Fact_Tasks[Task_Type] = "PPM tasks"),
+			    CALCULATE([Total Closed Tasks] + [Total Open Tasks], Fact_Tasks[Task_Type] = "PPM tasks"),
+			    0
+			)
+		displayFolder: Task
+		lineageTag: c492f4b2-b394-4deb-a65e-691b5c648014
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Task Backlog' = [Total Open Tasks]
+		formatString: 0
+		displayFolder: Task
+		lineageTag: 4da126e6-2876-4fa0-994c-58bb39c66238
+
+	measure 'Total Score Achieved (Category)' = ```
+			
+			AVERAGEX(
+			    Fact_Scores,
+			    VAR MaxPoints = LOOKUPVALUE(
+			        Dim_Criteria[Max_Points],
+			        Dim_Criteria[Criteria_Key],
+			        Fact_Scores[Criteria_Key]
+			    )
+			    RETURN
+			        IF(
+			            NOT(ISBLANK(MaxPoints)) && MaxPoints > 0,
+			            Fact_Scores[Value],
+			            0
+			        )
+			)
+			
+			```
+		formatString: 0
+		displayFolder: Score
+		lineageTag: 93a5b518-019a-4d92-bfb1-400738b55ff7
+
+	measure 'Total Possible Score' = ```
+			
+			AVERAGEX(
+			    FILTER(
+			        VALUES(Fact_Scores[Criteria_Key]),
+			        VAR Points = LOOKUPVALUE(
+			            Dim_Criteria[Max_Points],
+			            Dim_Criteria[Criteria_Key],
+			            Fact_Scores[Criteria_Key]
+			        )
+			        RETURN NOT(ISBLANK(Points)) && Points > 0
+			    ),
+			    LOOKUPVALUE(
+			        Dim_Criteria[Max_Points],
+			        Dim_Criteria[Criteria_Key],
+			        Fact_Scores[Criteria_Key]
+			    )
+			)
+			
+			```
+		formatString: 0
+		displayFolder: Score
+		lineageTag: 2ec4d41e-aa39-4330-948f-5ba410cb7da5
+
+	measure 'Compliance Score %' =
+			
+			AVERAGEX(
+			    Fact_Audit,
+			    DIVIDE(
+			        CALCULATE([Total Score Achieved (Category)]),
+			        CALCULATE([Total Possible Score]),
+			        0
+			    )
+			)
+		displayFolder: Score
+		lineageTag: 22d19d0d-c96f-4e8f-ac93-02858595c62a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Weighted Compliance Score' = ```
+			
+			SUMX(
+			    VALUES(Dim_Category[Category_Key]),
+			    VAR CategoryScore = 
+			        CALCULATE(
+			            DIVIDE(
+			                SUM(Fact_Scores[Value]),
+			                SUMX(
+			                    RELATEDTABLE(Fact_Scores),
+			                    RELATED(Dim_Criteria[Max_Points])
+			                )
+			            )
+			        )
+			    VAR CategoryWeight = CALCULATE(VALUES(Dim_Category[Weight]))
+			    RETURN CategoryScore * CategoryWeight
+			)
+			```
+		formatString: 0%;-0%;0%
+		displayFolder: Score
+		lineageTag: fc18b831-76eb-439f-a976-f9100d7ab7aa
+
+	measure 'Category Compliance %' = ```
+			
+			DIVIDE(
+			    SUMX(
+			        Fact_Scores,
+			        VAR Points = LOOKUPVALUE(
+			            Dim_Criteria[Max_Points],
+			            Dim_Criteria[Criteria_Key],
+			            Fact_Scores[Criteria_Key]
+			        )
+			        RETURN IF(NOT(ISBLANK(Points)) && Points > 0, Fact_Scores[Value], 0)
+			    ),
+			    SUMX(
+			        Fact_Scores,
+			        VAR Points = LOOKUPVALUE(
+			            Dim_Criteria[Max_Points],
+			            Dim_Criteria[Criteria_Key],
+			            Fact_Scores[Criteria_Key]
+			        )
+			        RETURN IF(NOT(ISBLANK(Points)) && Points > 0, Points, 0)
+			    ),
+			    0
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		displayFolder: Score
+		lineageTag: e279f80d-e567-4bbe-a477-8f5a04df2bc7
+
+	measure 'Critical Issues Count' =
+			
+			CALCULATE(
+			    COUNTROWS(Fact_Scores),
+			    Fact_Scores[Value] = 0
+			)
+		formatString: 0
+		displayFolder: RAG
+		lineageTag: db38e019-cebe-4cf7-ba5a-65782b1c2a3b
+
+	measure 'PPM Quality Score %' =
+			
+			CALCULATE(
+			    [Compliance Score %],
+			    Dim_Category[Category_Name] = "PPM Quality Compliance"
+			)
+		displayFolder: Category-Specific Measures
+		lineageTag: 1feb5150-9d0a-49c5-85b0-416e1ef50e4d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Grooming Standards Score %' =
+			
+			CALCULATE(
+			    [Compliance Score %],
+			    Dim_Category[Category_Name] = "Grooming & Presentation"
+			)
+		displayFolder: Category-Specific Measures
+		lineageTag: ce99332e-6a41-4569-a6d6-68ea6eb3f517
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Field Observation Score %' =
+			
+			CALCULATE(
+			    [Compliance Score %],
+			    Dim_Category[Category_Name] = "Field Observations"
+			)
+		displayFolder: Category-Specific Measures
+		lineageTag: becd0c38-0986-4d36-92ab-b44f9ba0d0d9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Housekeeping Score %' =
+			
+			CALCULATE(
+			    [Compliance Score %],
+			    Dim_Category[Category_Name] = "Housekeeping Standards"
+			)
+		displayFolder: Category-Specific Measures
+		lineageTag: c098d1c3-7779-4f98-8633-7971f7aa8768
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Client Rank' =
+			
+			RANKX(
+			    ALL(Dim_Location[Client]),
+			    [Compliance Score %],
+			    ,
+			    DESC,
+			    Dense
+			)
+		formatString: 0
+		displayFolder: Ranking & Comparison
+		lineageTag: b3a79b8d-cc8d-4c15-8ba8-b7efc44d040a
+
+	measure 'Best Performing Category' =
+			
+			CALCULATE(
+			    FIRSTNONBLANK(Dim_Category[Category_Name], 1),
+			    TOPN(
+			        1,
+			        ALL(Dim_Category[Category_Name]),
+			        [Category Compliance %],
+			        DESC
+			    )
+			)
+		displayFolder: Ranking & Comparison
+		lineageTag: d55a769f-3942-4478-9027-4321206193e4
+
+	measure 'Worst Performing Category' =
+			
+			CALCULATE(
+			    FIRSTNONBLANK(Dim_Category[Category_Name], 1),
+			    TOPN(
+			        1,
+			        ALL(Dim_Category[Category_Name]),
+			        [Category Compliance %],
+			        ASC
+			    )
+			)
+		displayFolder: Ranking & Comparison
+		lineageTag: ea42ecd2-94a8-4ad0-9fb3-9662a869604d
+
+	measure 'Location Performance vs Avg' = ```
+			
+			[Compliance Score %] - 
+			CALCULATE(
+			    [Compliance Score %],
+			    ALL(Dim_Location)
+			)
+			```
+		displayFolder: Ranking & Comparison
+		lineageTag: fe923961-aeca-443a-b602-c347c37566f4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Criteria Pass Rate' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        COUNTROWS(Fact_Scores),
+			        Fact_Scores[Value] = RELATED(Dim_Criteria[Max_Points])
+			    ),
+			    COUNTROWS(Fact_Scores),
+			    0
+			)
+		displayFolder: Advance
+		lineageTag: c829ef8e-1622-4796-9cdb-55b7e443f097
+
+	measure 'Avg Score Per Audit' =
+			
+			AVERAGEX(
+			    Fact_Audit,
+			    CALCULATE(SUM(Fact_Scores[Value]))
+			)
+		displayFolder: Advance
+		lineageTag: 85770a8b-3d39-4dc0-a5eb-a026529f93fd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Target Compliance' = 0.85  // 85% target
+		displayFolder: Advance
+		lineageTag: 194b6b0d-4ea7-469a-8b48-892ae55b7822
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Compliance vs Target' =
+			
+			[Compliance Score %] - [Target Compliance]
+		displayFolder: Advance
+		lineageTag: e9a6c64b-9309-473e-aea2-489ea819b6aa
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Selected Client' =
+			
+			IF(
+			    HASONEVALUE(Dim_Location[Client]),
+			    VALUES(Dim_Location[Client]),
+			    "All Clients"
+			)
+		displayFolder: Advance
+		lineageTag: 903498ea-e5a1-4133-b8db-ab42dfe7e7e8
+
+	measure 'Audits for Selected Location' =
+			
+			CALCULATE(
+			    [Total Audits],
+			    ALLEXCEPT(Fact_Audit, Dim_Location)
+			)
+		displayFolder: Advance
+		lineageTag: 10713977-c704-4686-a9e3-8d60d86613f8
+
+	measure 'Dashboard Title' = ```
+			
+			"Survey Analysis - " & [Selected Client] & " | " & 
+			FORMAT(MAX(Dim_Date[Date of Audit]), "MMM YYYY")
+			
+			
+			```
+		lineageTag: d63f15ed-4ac9-451d-b8b3-9cef6cb434d2
+
+	measure 'Task Status %'
+		lineageTag: 693425d8-11af-4e7b-9f55-8d788a93509e
+
+	measure 'Max Score' = SUMX(Fact_Scores, RELATED(Dim_Criteria[Max_Points]))
+		formatString: 0
+		displayFolder: Score
+		lineageTag: 8b03e61d-360e-4d1c-83c4-e3da3f061784
+
+	measure 'Status Color' =
+			
+			VAR CompliancePct = [Compliance Score %]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        CompliancePct >= 0.8, "#00B050",
+			        CompliancePct >= 0.6, "#FFC000",
+			        "#C00000"
+			    )
+		displayFolder: Score
+		lineageTag: cd69f25f-49a1-40c2-bf5f-b69b757a2405
+
+	measure 'Status Indicator' =
+			
+			VAR CompliancePct = [Compliance Score %]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        CompliancePct >= 0.9, "🟢 Excellent",
+			        CompliancePct >= 0.8, "🟢 Good",
+			        CompliancePct >= 0.7, "🟡 Fair",
+			        CompliancePct >= 0.6, "🟡 Needs Improvement",
+			        "🔴 Critical"
+			    )
+		displayFolder: Score
+		lineageTag: 4b912e9a-5169-4d96-bba9-e8dfca18c98a
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+

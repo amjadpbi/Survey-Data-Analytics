@@ -1,0 +1,54 @@
+table Dim_Location
+	lineageTag: 3e8b6443-1fb4-4b91-a923-7d990601e08f
+
+	column Location_Key
+		dataType: int64
+		formatString: 0
+		lineageTag: ed6472e0-d2fb-45f6-b0f2-90815407045c
+		summarizeBy: none
+		sourceColumn: Location_Key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Business Unit'
+		dataType: string
+		lineageTag: 10e30c91-ca51-4bf5-8bcc-a4c0acb629a4
+		summarizeBy: none
+		sourceColumn: Business Unit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Client
+		dataType: string
+		lineageTag: 3a7967b3-b0f9-49b4-945e-89848754daab
+		summarizeBy: none
+		sourceColumn: Client
+
+		annotation SummarizationSetBy = Automatic
+
+	column Building/Location
+		dataType: string
+		lineageTag: 3933a666-2b14-4af7-85ac-19554439f8ec
+		summarizeBy: none
+		sourceColumn: Building/Location
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dim_Location = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("D:\Power BI\Survey.xlsx"), null, true),
+				    Sheet1_Sheet = Source{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+				    #"Removed Columns" = Table.RemoveColumns(#"Promoted Headers",{"Start time", "Completion time", "Email", "Name", "Date of Audit", "Total Open Reactive tasks Year-to-Date ", "Total Closed Reactive tasks Year-to-Date", "Total Open PPM tasks Year-to-Date", "Total Closed PPM tasks Year-to-Date ", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Found (Document Control)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Signed (Ownership)", "Review Five Completed PPM's from Previous Month.PPM Task Sheet Filled in Correctly", "Review Five Completed PPM's from Previous Month.PPM Task Sheet has been correctly updated into CAFM", "Review Five Completed PPM's from Previous Month.Physical check the PPM was completed Correctly as per SFG20", "List the Five completed PPM's that were Reviewed", "Date of last Fire Evacuation Drill", "Date of Next Fire Evacuation Drill ", "Observe two PPM Tasks Being Carried Out.Check Method Statement and Risk Assessment is in place for PPM", "Observe two PPM Tasks Being Carried Out.Check evidence that Method statement and Risk Assessment has been briefed to Operatives", "Observe two PPM Tasks Being Carried Out.Are Operatives using the correct PPE", "Observe two PPM Tasks Being Carried Out.Was the PPM completed as per SFG20", "Observe two PPM Tasks Being Carried Out.Was the PPM task sheet filled in correctly", "Observe two PPM Tasks Being Carried Out.Operatives had correct tools and equipment", "Observe two PPM Tasks Being Carried Out.PPM task location was left clean & tidy", "Observe two PPM Tasks Being Carried Out.PPM task location was made safe prior to working (signage, lockout/tagout. etc)", "List the PPM Observed", "Log Books & Testing.Review Fire Alarm log Book ensure tests have been carried out as required", "Log Books & Testing.Review Water Treatment Log Book ensure tests have been carried out as required", "Log Books & Testing.Review Lift Log Book ensure tests have been carried out as required", "Log Books & Testing.Review BMS Log Book ensure alarms and faults have been noted and actioned", "Log Books & Testing.Fire extinguishers have had an annual maintenance inspection and service", "Log Books & Testing.Review UPS & Backup Generator Log book ensure tests have been carried out as required", "Document Control & Procedures.Emergency Escalation Plan", "Document Control & Procedures.Rain Plan", "Document Control & Procedures.Lift Entrapment Plan", "Document Control & Procedures.Water & Power Loss Procedure", "Document Control & Procedures.Fire Alarm Procedure", "Document Control & Procedures.Emergency Evacuation Procedure", "Document Control & Procedures.Mechanical and electrical line diagrams are in place", "Document Control & Procedures.Forward Maintenance Register is in place and up to date", "Document Control & Procedures.Document Control is in place", "Document Control & Procedures Comments/Observations", "House Keeping Standards.Plant Room(s) are clean, tidy and no visible watermarks/leaks", "House Keeping Standards.Plant rooms are Locked/Secured", "House Keeping Standards.Storerooms are clean, organised and tidy", "House Keeping Standards.Offices are clean and tidy", "Grooming Standards.Body Odour Acceptable", "Grooming Standards.Clean Shaven/Beard Trimmed", "Grooming Standards.Hair Neat & Tidy", "Grooming Standards.Wearing Correct Initial Uniform", "Grooming Standards.Shirt Tucked Into Trousers", "Grooming Standards.Black Belt Worn", "Grooming Standards.Black Safety Shoes Clean & Polished", "Grooming Standards.Company ID Card Visible", "Additional Comments/Observations", "Month", "YEAR-MONTH", "Region"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Removed Columns",{{"Id", "Location_Key"}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Renamed Columns",{{"Location_Key", Int64.Type}}),
+				    #"Appended Query" = Table.Combine({#"Changed Type", Location})
+				in
+				    #"Appended Query"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

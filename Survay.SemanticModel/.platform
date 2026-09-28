@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Survay"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "49e04632-d7f5-4361-8c64-0f766d66b333"
+  }
+}

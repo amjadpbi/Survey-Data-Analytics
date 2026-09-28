@@ -1,0 +1,63 @@
+relationship b7566d0f-e9dd-1ae9-71f0-81cd5ea5ef92
+	fromColumn: Fact_Tasks.Audit_Id
+	toColumn: Fact_Audit.Audit_ID
+
+relationship df3a1f0c-2b90-4fa2-a3fd-517faab70f81
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Audit.'Start time'
+	toColumn: LocalDateTable_2baec099-1ec5-410b-ae6a-463b7fe886b8.Date
+
+relationship 4e6d1254-2f34-4382-ae5c-0cf250cf360c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Fact_Audit.'Completion time'
+	toColumn: LocalDateTable_17269684-5624-4feb-a8c2-1b86de2051bc.Date
+
+relationship 81903ff5-4d30-4100-b7bb-fb62103bc2d3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Dim_Date.'Date of Audit'
+	toColumn: LocalDateTable_17b6b139-41ac-4390-9a70-22d6105f462c.Date
+
+relationship f2117fc0-fa1d-ee8a-44f3-f1247198c376
+	crossFilteringBehavior: bothDirections
+	fromColumn: Dim_Criteria.Category_Key
+	toColumn: Dim_Category.Category_Key
+
+relationship 1789f6e0-38b2-19ed-5d30-cdf663cbc416
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: Dim_Criteria.Criteria_Key
+	toColumn: Hierarchy.Criteria_Id
+
+relationship e3793ed5-07b3-4458-a59e-01f67e50879e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Audit.'Start time'
+	toColumn: LocalDateTable_dd67c951-3806-4195-9fc2-73952466a360.Date
+
+relationship d7c5fb53-cd0f-425f-8004-fb34d376029b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Audit.'Completion time'
+	toColumn: LocalDateTable_ef8a5ead-b54a-47f6-b5bf-2d322834fd59.Date
+
+relationship 6f98046e-d781-4b3a-8208-3e3ed687f975
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Date.'Date of Audit'
+	toColumn: LocalDateTable_daa72224-49f0-49d6-bd6b-302f61476972.Date
+
+relationship 40d0300a-90f3-71e7-9e9b-586bb188b342
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: Fact_Audit.Location_Key
+	toColumn: Dim_Location.Location_Key
+
+relationship 0924426c-6513-2d29-47b9-160e35d38e20
+	fromColumn: Fact_Audit.Date_Key
+	toColumn: Dim_Date.Id
+
+relationship 2a6a0f0e-9865-5676-a8c0-dce5620b1a3c
+	fromColumn: Fact_Scores.Audit_Id
+	toColumn: Fact_Audit.Audit_ID
+
+relationship e715087b-9919-30c1-b4ab-80e562b83c8c
+	fromColumn: Fact_Scores.Criteria_Key
+	toColumn: Dim_Criteria.Criteria_Key
+
